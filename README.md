@@ -5,7 +5,7 @@ simple and quick golang JSON mock server
 ## Install
 
 ```bash
-go install testpkg/tkc/go-json-server
+go install github.com/tkc/go-json-server
 ```
 
 ## Run
