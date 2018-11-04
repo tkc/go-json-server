@@ -19,6 +19,8 @@ https://github.com/tkc/go-json-server/tree/master/example
 ## API Setting
 put api.json  and run `go-json-server`
 
+`api.json`
+
 ```javascript
 {
   "port": 3000,
@@ -43,6 +45,14 @@ put api.json  and run `go-json-server`
 }
 ```
 
+`user.json`
+```javascript
+{
+  "id": 1,
+  "name": "name",
+  "address": "address"
+}
+```
 ## License
 
 MIT ✨
