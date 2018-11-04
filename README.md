@@ -16,7 +16,7 @@ go-json-server
 See example  
 https://github.com/tkc/go-json-server/tree/master/example
 
-## API setting
+## API Setting
 put api.json  and run `go-json-server`
 
 ```
