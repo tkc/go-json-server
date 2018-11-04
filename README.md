@@ -1,6 +1,6 @@
 # go-json-server
 
-simple add quick golang json server
+simple and quick golang JSON mock server
 
 ## Install
 
