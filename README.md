@@ -1,25 +1,27 @@
 # go-json-server
 
-simple add quick golang json server
+simple and quick golang JSON mock server
 
-# Install
+## Install
 
-```$xslt
-go install testpkg/tkc/go-json-server
+```bash
+go install github.com/tkc/go-json-server
 ```
 
 ## Run
-```$xslt
+```bash
 go-json-server
 ```
 
 See example  
 https://github.com/tkc/go-json-server/tree/master/example
 
-## API setting
+## API Setting
 put api.json  and run `go-json-server`
 
-```
+`api.json`
+
+```javascript
 {
   "port": 3000,
   "endpoints": [
@@ -42,3 +44,17 @@ put api.json  and run `go-json-server`
   ]
 }
 ```
+
+`user.json`
+```javascript
+{
+  "id": 1,
+  "name": "name",
+  "address": "address"
+}
+```
+## License
+
+MIT ✨
+
+
