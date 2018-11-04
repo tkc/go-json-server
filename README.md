@@ -59,6 +59,17 @@ put api.json  and run `go-json-server`
   "address": "address"
 }
 ```
+
+`users.json`
+```javascript
+[
+  {
+    "id":1,
+    "name": "name"
+  }
+]
+```
+
 ## License
 
 MIT ✨
