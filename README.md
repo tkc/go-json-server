@@ -2,14 +2,14 @@
 
 simple add quick golang json server
 
-# Install
+## Install
 
-```$xslt
+```bash
 go install testpkg/tkc/go-json-server
 ```
 
 ## Run
-```$xslt
+```bash
 go-json-server
 ```
 
@@ -19,7 +19,7 @@ https://github.com/tkc/go-json-server/tree/master/example
 ## API Setting
 put api.json  and run `go-json-server`
 
-```
+```javascript
 {
   "port": 3000,
   "endpoints": [
@@ -42,3 +42,9 @@ put api.json  and run `go-json-server`
   ]
 }
 ```
+
+## License
+
+MIT ✨
+
+
