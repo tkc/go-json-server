@@ -2,6 +2,11 @@
 
 simple and quick golang JSON mock server
 
+- [ ] select api.json path
+- [ ] enable url param
+- [ ] server deamon
+- [ ] user auth
+
 ## Install
 
 ```bash
