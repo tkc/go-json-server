@@ -6,6 +6,7 @@ simple and quick golang JSON mock server
 - [ ] enable url param
 - [ ] server deamon
 - [ ] account auth
+- [ ] cache file data
 
 ## Install
 
