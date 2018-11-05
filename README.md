@@ -2,12 +2,12 @@
 
 simple and quick golang JSON mock server
 
-- [ ] select api.json path
-- [ ] enable url param
+- [ ] change api.json path
+- [ ] url param
 - [ ] server deamon
 - [ ] auth account 
-- [ ] cache file data
 - [ ] error response
+- [ ] access log
 
 ## Install
 
