@@ -5,7 +5,7 @@ simple and quick golang JSON mock server
 - [ ] change api.json path
 - [ ] url param
 - [ ] server deamon
-- [ ] jwt auth
+- [ ] jwt or session auth
 - [ ] error response
 - [ ] access log
 
