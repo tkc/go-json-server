@@ -2,6 +2,13 @@
 
 simple and quick golang JSON mock server
 
+- [ ] select api.json path
+- [ ] enable url param
+- [ ] server deamon
+- [ ] auth account 
+- [ ] cache file data
+- [ ] error response
+
 ## Install
 
 ```bash
@@ -53,6 +60,17 @@ put api.json  and run `go-json-server`
   "address": "address"
 }
 ```
+
+`users.json`
+```javascript
+[
+  {
+    "id":1,
+    "name": "name"
+  }
+]
+```
+
 ## License
 
 MIT ✨
