@@ -5,6 +5,7 @@ simple and quick golang JSON mock server
 - static json api server
 - static file server
 
+- [ ] cache response and reload
 - [ ] change api.json path
 - [ ] url param
 - [ ] server deamon
