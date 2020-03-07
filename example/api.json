@@ -4,6 +4,12 @@
     {
       "method": "GET",
       "status": 200,
+      "path": "/",
+      "jsonPath": "./health-check.json"
+    },
+    {
+      "method": "GET",
+      "status": 200,
       "path": "/users",
       "jsonPath": "./users.json"
     },
@@ -19,4 +25,3 @@
     }
   ]
 }
-
