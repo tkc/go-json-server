@@ -1,5 +1,5 @@
 
-![Go](https://github.com/tkc/go-json-server/workflows/Go/badge.svg)
+![Go](https://github.com/tkc/go-json-server/workflows/Go/badge.svg?branch=master)
 
 ```
 / __|___   _ | |__ _ ___ _ _   / __| ___ _ ___ _____ 
