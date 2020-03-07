@@ -1,4 +1,8 @@
-# go-json-server
+
+/ __|___   _ | |__ _ ___ _ _   / __| ___ _ ___ _____ 
+| (_ / _ \ | || / _` / _ \ ' \  \__ \/ -_) '_\ V / -_)
+ \___\___/  \__/\__,_\___/_||_| |___/\___|_|  \_/\___|
+                                                      
 
 simple and quick golang JSON mock server
 
@@ -36,6 +40,12 @@ put api.json  and run `go-json-server`
 {
   "port": 3000,
   "endpoints": [
+     {
+      "method": "GET",
+      "status": 200,
+      "path": "/",
+      "jsonPath": "./healthcheck.json"
+    },
     {
       "method": "GET",
       "status": 200,
@@ -56,12 +66,12 @@ put api.json  and run `go-json-server`
 }
 ```
 
-`user.json`
+
+`health-check.json`
 ```javascript
 {
-  "id": 1,
-  "name": "name",
-  "address": "address"
+    "status": "ok",
+    "message": "go-json-server started"
 }
 ```
 
