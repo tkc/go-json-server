@@ -1,8 +1,11 @@
 
+![Go](https://github.com/tkc/go-json-server/workflows/Go/badge.svg)
+
+```
 / __|___   _ | |__ _ ___ _ _   / __| ___ _ ___ _____ 
 | (_ / _ \ | || / _` / _ \ ' \  \__ \/ -_) '_\ V / -_)
  \___\___/  \__/\__,_\___/_||_| |___/\___|_|  \_/\___|
-                                                      
+```                                                
 
 simple and quick golang JSON mock server
 
