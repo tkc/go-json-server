@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -78,7 +79,6 @@ const (
 	HeaderXCSRFToken                    = "X-CSRF-Token"
 )
 
-
 type Endpoint struct {
 	Type     string `json:"type"`
 	Method   string `json:"method"`
@@ -97,7 +97,6 @@ type API struct {
 var api API
 
 func main() {
-
 	raw, err := ioutil.ReadFile("./api.json")
 	if err != nil {
 		fmt.Println(err.Error())
@@ -114,31 +113,34 @@ func main() {
 		if len(ep.Folder) > 0 {
 			http.Handle(ep.Path+"/", http.StripPrefix(ep.Path+"/", http.FileServer(http.Dir(ep.Folder))))
 		} else {
-			http.HandleFunc(ep.Path, Response)
+			http.HandleFunc(ep.Path, response)
 		}
 	}
 
 	err = http.ListenAndServe(":"+strconv.Itoa(api.Port), nil)
+
 	if err != nil {
 		log.Fatal(" ", err)
 	}
 }
 
-func Response(w http.ResponseWriter, r *http.Request) {
-
-	w.Header().Set( "Access-Control-Allow-Origin", "*" )
-	w.Header().Set( "Access-Control-Allow-Credentials", "true" )
-	w.Header().Set( "Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization" )
-	w.Header().Set( "Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS" )
+func response(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
+	accessLog(r)
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+
 	for _, ep := range api.Endpoints {
 		if r.URL.Path == ep.Path && r.Method == ep.Method {
 			fmt.Println("method:", r.Method)
 			fmt.Println("path:", r.URL.Path)
 			w.Header().Set(HeaderContentType, MIMETextPlainCharsetUTF8)
 			w.WriteHeader(ep.Status)
-			s := Path2Response(ep.JsonPath)
+			s := path2Response(ep.JsonPath)
 			b := []byte(s)
 			w.Write(b)
 		}
@@ -146,7 +148,7 @@ func Response(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Path2Response(path string) string {
+func path2Response(path string) string {
 	file, err := os.Open(path)
 	if err != nil {
 		log.Print(err)
@@ -156,4 +158,16 @@ func Path2Response(path string) string {
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(file)
 	return buf.String()
+}
+
+func accessLog(r *http.Request) {
+	file, err := os.OpenFile("log.csv", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+	s := []string{r.Method, r.Host, r.Proto, r.RequestURI, r.RemoteAddr}
+	writer := csv.NewWriter(file)
+	writer.Write(s)
+	writer.Flush()
 }
