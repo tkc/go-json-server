@@ -47,7 +47,7 @@ put api.json  and run `go-json-server`
       "method": "GET",
       "status": 200,
       "path": "/",
-      "jsonPath": "./healthcheck.json"
+      "jsonPath": "./health-check.json"
     },
     {
       "method": "GET",
