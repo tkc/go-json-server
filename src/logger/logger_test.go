@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetNonReadRecord(t *testing.T) {
+func TestAccessLog(t *testing.T) {
 
 	url := "example.com"
 	content := `{"integer":1,"string":"xyz", "object": { "element": 1 } , "array": [1, 2, 3]}`
