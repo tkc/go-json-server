@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -10,6 +9,8 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+
+	"github.com/tkc/go-json-server/src/logger"
 )
 
 const (
@@ -127,7 +128,7 @@ func main() {
 func response(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
-	accessLog(r)
+	logger.AccessLog(r)
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
@@ -158,16 +159,4 @@ func path2Response(path string) string {
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(file)
 	return buf.String()
-}
-
-func accessLog(r *http.Request) {
-	file, err := os.OpenFile("log.csv", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-	s := []string{r.Method, r.Host, r.Proto, r.RequestURI, r.RemoteAddr}
-	writer := csv.NewWriter(file)
-	writer.Write(s)
-	writer.Flush()
 }
