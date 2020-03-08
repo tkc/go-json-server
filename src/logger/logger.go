@@ -40,6 +40,18 @@ func (l *stdLogger) AccessLog(r *http.Request) {
 	writer.Flush()
 }
 
+func (l *stdLogger) Printf(format string, args ...interface{}) {
+	l.stdout.Printf(format, args...)
+}
+
+func (l *stdLogger) Errorf(format string, args ...interface{}) {
+	l.stderr.Printf(format, args...)
+}
+
+func (l *stdLogger) Fatalf(format string, args ...interface{}) {
+	l.stderr.Fatalf(format, args...)
+}
+
 func dumpJsonBoddy(req *http.Request) string {
 
 	if req.Method == "GET" {
@@ -72,16 +84,4 @@ func dumpJsonBoddy(req *http.Request) string {
 
 	s := fmt.Sprintf("%v", jsonBody)
 	return s
-}
-
-func (l *stdLogger) Printf(format string, args ...interface{}) {
-	l.stdout.Printf(format, args...)
-}
-
-func (l *stdLogger) Errorf(format string, args ...interface{}) {
-	l.stderr.Printf(format, args...)
-}
-
-func (l *stdLogger) Fatalf(format string, args ...interface{}) {
-	l.stderr.Fatalf(format, args...)
 }
