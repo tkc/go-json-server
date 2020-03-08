@@ -1,0 +1,6 @@
+GET,localhost:3000,HTTP/1.1,/users,[::1]:56235,/users
+GET,localhost:3000,HTTP/1.1,/users,[::1]:56259,/users
+GET,localhost:3000,HTTP/1.1,/users,[::1]:56302
+GET,localhost:3000,HTTP/1.1,/users,[::1]:56302
+GET,localhost:3000,HTTP/1.1,/users,[::1]:56302
+GET,localhost:3000,HTTP/1.1,/user/1,[::1]:56302
