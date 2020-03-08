@@ -125,7 +125,6 @@ func main() {
 	}
 }
 
-
 func response(w http.ResponseWriter, r *http.Request) {
 
 	appLogger := logger.CreateLogger()
