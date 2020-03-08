@@ -1,4 +1,13 @@
-# go-json-server
+
+![Go](https://github.com/tkc/go-json-server/workflows/Go/badge.svg?branch=master)
+
+```
+  ___          _                 ___                      
+ / __|___   _ | |__ _ ___ _ _   / __| ___ _ ___ _____ _ _ 
+| (_ / _ \ | || / _` / _ \ ' \  \__ \/ -_) '_\ V / -_) '_|
+ \___\___/  \__/\__,_\___/_||_| |___/\___|_|  \_/\___|_|  
+                                                          
+```                                                
 
 simple and quick golang JSON mock server
 
@@ -19,7 +28,7 @@ simple and quick golang JSON mock server
 go install github.com/tkc/go-json-server
 ```
 
-## Serve
+## Serve Mock Server
 ```bash
 go-json-server
 ```
@@ -36,6 +45,12 @@ put api.json  and run `go-json-server`
 {
   "port": 3000,
   "endpoints": [
+     {
+      "method": "GET",
+      "status": 200,
+      "path": "/",
+      "jsonPath": "./health-check.json"
+    },
     {
       "method": "GET",
       "status": 200,
@@ -56,12 +71,12 @@ put api.json  and run `go-json-server`
 }
 ```
 
-`user.json`
+
+`health-check.json`
 ```javascript
 {
-  "id": 1,
-  "name": "name",
-  "address": "address"
+    "status": "ok",
+    "message": "go-json-server started"
 }
 ```
 
