@@ -23,5 +23,7 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
+    - name: Lint
+      run: scopelint ./...      
     - name: Build
       run: go build -v .
