@@ -18,6 +18,7 @@ jobs:
       run: |
         export GO111MODULE=on
         go mod download
+        go get -u github.com/kyoh86/scopelint
     - name: Lint
       run: |
         scopelint ./... 
@@ -27,5 +28,3 @@ jobs:
       run: go vet ./...
     - name: Build
       run: go build -v .
-
-  
