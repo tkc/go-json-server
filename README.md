@@ -45,9 +45,8 @@ https://github.com/tkc/go-json-server/tree/master/example
 $ go-json-server
 ```
 
-## Json API Setting
+### Sample Json Setting
 
-put api.json  and run `go-json-server`
 
 `api.json`
 
