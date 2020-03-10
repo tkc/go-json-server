@@ -85,7 +85,7 @@ $ go-json-server
 ```javascript
 {
     "status": "ok",
-    "message": "go-json-server started"
+    "message": "go-json-server"
 }
 ```
 
