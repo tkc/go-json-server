@@ -100,7 +100,7 @@ $ go-json-server
 ```
 
 `user.json`
-```
+```javascript
 {
   "id": 1,
   "name": "name",
