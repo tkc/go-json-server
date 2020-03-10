@@ -27,12 +27,12 @@ simulate an http server and return the specified json according to a custom rout
 ## Install
 
 ```bash
-go install github.com/tkc/go-json-server
+$ go install github.com/tkc/go-json-server
 ```
 
 ## Serve Mock Server
 ```bash
-go-json-server
+$ go-json-server
 ```
 
 See example  
