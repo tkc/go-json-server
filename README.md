@@ -99,6 +99,14 @@ $ go-json-server
 ]
 ```
 
+`user.json`
+```
+{
+  "id": 1,
+  "name": "name",
+  "address": "address"
+}
+```
 ## License
 
 MIT ✨
