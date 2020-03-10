@@ -9,11 +9,12 @@
                                                           
 ```                                                
 
-simple and quick golang JSON mock server
+simple and quick golang JSON mock server.
+simulate an http server and return the specified json according to a custom route.
+
 
 - static json api server
 - static file server
-
 - [ ] cache response and reload
 - [ ] change api.json path
 - [ ] url param
