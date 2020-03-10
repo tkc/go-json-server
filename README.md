@@ -9,7 +9,7 @@
                                                           
 ```                                                
 
-simple and quick golang JSON mock server.
+simple and quick golang JSON mock server.  
 simulate an http server and return the specified json according to a custom route.
 
 
