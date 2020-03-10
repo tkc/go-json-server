@@ -21,6 +21,7 @@ simple and quick golang JSON mock server
 - [ ] jwt or session auth
 - [ ] error response
 - [ ] access log
+- [ ] E2E test sample source in Github Actions
 
 ## Install
 
