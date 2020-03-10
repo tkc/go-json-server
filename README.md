@@ -30,15 +30,23 @@ simulate an http server and return the specified json according to a custom rout
 $ go install github.com/tkc/go-json-server
 ```
 
-## Serve Mock Server
+## Prepare api.json
+
 ```bash
-$ go-json-server
+- api.json // required 
+- response.json
 ```
 
 See example  
 https://github.com/tkc/go-json-server/tree/master/example
 
-## API Setting
+## Serve Mock Server
+```bash
+$ go-json-server
+```
+
+## Json API Setting
+
 put api.json  and run `go-json-server`
 
 `api.json`
