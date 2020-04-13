@@ -27,7 +27,7 @@ simulate an http server and return the specified json according to a custom rout
 ## Install
 
 ```bash
-$ go install github.com/tkc/go-json-server
+$ go get -u github.com/tkc/go-json-server
 ```
 
 ## Prepare api.json
