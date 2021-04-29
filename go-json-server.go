@@ -104,7 +104,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	json.Unmarshal(raw, &api)
+	err = json.Unmarshal(raw, &api)
 	if err != nil {
 		log.Fatal(" ", err)
 	}
