@@ -96,6 +96,10 @@ type API struct {
 	Endpoints []Endpoint `json:"endpoints"`
 }
 
+type RequestBody struct {
+	Query string `json:"query"`
+}
+
 var api API
 
 var base_dir string
@@ -185,4 +189,13 @@ func path2Response(path string) string {
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(file)
 	return buf.String()
+}
+
+func getRequestBody(r http.Request) (RequestBody, error) {
+	var b RequestBody
+	err := json.NewDecoder(r.Body).Decode(&b)
+	if err != nil {
+		return b, err
+	}
+	return b, nil
 }
