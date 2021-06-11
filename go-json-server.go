@@ -46,6 +46,7 @@ const (
 	HeaderContentEncoding               = "Content-Encoding"
 	HeaderContentLength                 = "Content-Length"
 	HeaderContentType                   = "Content-Type"
+	HeaderConversationToken             = "Conversation-Token"
 	HeaderCookie                        = "Cookie"
 	HeaderSetCookie                     = "Set-Cookie"
 	HeaderIfModifiedSince               = "If-Modified-Since"
@@ -134,14 +135,20 @@ func response(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+	w.Header().Set("Access-Control-Allow-Headers",
+		"Origin, X-Requested-With, Content-Type, Accept, Authorization, Conversation-Token")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-
+	conversation_header := w.Header().Get(HeaderConversationToken)
 	for _, ep := range api.Endpoints {
 		if r.URL.Path == ep.Path && r.Method == ep.Method {
 			fmt.Println("method:", r.Method)
 			fmt.Println("path:", r.URL.Path)
 			w.Header().Set(HeaderContentType, MIMETextPlainCharsetUTF8)
+			if conversation_header == "" {
+				w.Header().Set(HeaderConversationToken, CONV_TOKEN)
+			} else {
+				w.Header().Set(HeaderConversationToken, conversation_header)
+			}
 			w.WriteHeader(ep.Status)
 			s := path2Response(ep.JsonPath)
 			b := []byte(s)
