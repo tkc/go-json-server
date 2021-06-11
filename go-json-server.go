@@ -15,6 +15,7 @@ import (
 
 const (
 	charsetUTF8 = "charset=UTF-8"
+	CONV_TOKEN  = "CONV-0123456789"
 )
 
 const (
