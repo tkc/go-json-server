@@ -98,8 +98,18 @@ type API struct {
 
 var api API
 
+var base_dir string
+
 func main() {
-	raw, err := ioutil.ReadFile("./api.json")
+
+	argLength := len(os.Args[1:])
+	if argLength != 1 {
+		base_dir = "."
+	} else {
+		base_dir = os.Args[1]
+	}
+
+	raw, err := ioutil.ReadFile(base_dir + "/api.json")
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
@@ -168,7 +178,8 @@ func response(w http.ResponseWriter, r *http.Request) {
 }
 
 func path2Response(path string) string {
-	file, err := os.Open(path)
+
+	file, err := os.Open(base_dir + path + ".json")
 	if err != nil {
 		log.Print(err)
 		os.Exit(1)
