@@ -153,6 +153,12 @@ func response(w http.ResponseWriter, r *http.Request) {
 		"Origin, X-Requested-With, Content-Type, Accept, Authorization, Conversation-Token")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 	conversation_header := w.Header().Get(HeaderConversationToken)
+	reqBody, err := getRequestBody(*r)
+	if err != nil {
+		log.Fatal(" ", err)
+		os.Exit(1)
+	}
+
 	for _, ep := range api.Endpoints {
 		// check if method matches
 		methodMatches := false
@@ -170,7 +176,7 @@ func response(w http.ResponseWriter, r *http.Request) {
 				w.Header().Set(HeaderConversationToken, conversation_header)
 			}
 			w.WriteHeader(ep.Status)
-			s := path2Response(ep.Path)
+			s := path2Response(ep.Path, reqBody.Query)
 			b := []byte(s)
 			w.Write(b)
 		}
@@ -178,7 +184,7 @@ func response(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func path2Response(path string) string {
+func path2Response(path string, query string) string {
 
 	file, err := os.Open(base_dir + path + ".json")
 	if err != nil {
@@ -188,6 +194,7 @@ func path2Response(path string) string {
 	defer file.Close()
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(file)
+	fmt.Println("Recieved Query: ", query)
 	return buf.String()
 }
 
