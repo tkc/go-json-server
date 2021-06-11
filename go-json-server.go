@@ -83,12 +83,11 @@ const (
 )
 
 type Endpoint struct {
-	Type     string `json:"type"`
-	Method   string `json:"method"`
-	Status   int    `json:"status"`
-	Path     string `json:"path"`
-	JsonPath string `json:"jsonPath"`
-	Folder   string `json:"folder"`
+	Type    string   `json:"type"`
+	Methods []string `json:"methods"`
+	Status  int      `json:"status"`
+	Path    string   `json:"path"`
+	Folder  string   `json:"folder"`
 }
 
 type API struct {
@@ -145,6 +144,15 @@ func response(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("method:", r.Method)
 			fmt.Println("path:", r.URL.Path)
 			w.Header().Set(HeaderContentType, MIMETextPlainCharsetUTF8)
+		// check if method matches
+		methodMatches := false
+		for _, m := range ep.Methods {
+			if m == r.Method {
+				methodMatches = true
+				break
+			}
+		}
+		if r.URL.Path == ep.Path && methodMatches {
 			if conversation_header == "" {
 				w.Header().Set(HeaderConversationToken, CONV_TOKEN)
 			} else {
