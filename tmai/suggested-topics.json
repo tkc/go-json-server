@@ -1,0 +1,48 @@
+{
+    "query": "<original question>",
+    "meta": {
+    },
+    "response": {
+        "messages": [
+            {
+                "meta": {
+                    "...": "...contains meta info that may ne useful in the future"
+                },
+                "type": "suggested_topics",
+                "toics": [
+                    {
+                        "text": "<TEXT FOR QUESTION>"
+                    },
+                    {
+                        "text": "<TEXT FOR QUESTION>"
+                    },
+                    {
+                        "text": "<TEXT FOR QUESTION>"
+                    }
+                ]
+            }
+        ]
+    },
+    "suggestions": [
+        {
+            "type": "explore_stabby"
+        },
+        {
+            "type": "explore_questions"
+        },
+        {
+            "type": "suggested_questions",
+            "questions": [
+                {
+                    "text": "<TEXT FOR QUESTION>"
+                },
+                {
+                    "text": "<TEXT FOR QUESTION>"
+                },
+                {
+                    "text": "<TEXT FOR QUESTION>"
+                }
+            ]
+        }
+    ]
+}

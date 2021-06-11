@@ -1,0 +1,25 @@
+{
+    "port": 3000,
+    "endpoints": [
+        {
+            "methods": ["GET", "POST"],
+            "status": 200,
+            "path": "/article"
+        },
+        {
+            "method": ["GET"],
+            "status": 200,
+            "path": "/text"
+        },
+        {
+            "method": ["GET"],
+            "status": 200,
+            "path": "/infographic"
+        },
+        {
+            "method": ["GET"],
+            "status": 200,
+            "path": "/suggested-topics"
+        }
+    ]
+}
