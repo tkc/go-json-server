@@ -150,10 +150,6 @@ func response(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 	conversation_header := w.Header().Get(HeaderConversationToken)
 	for _, ep := range api.Endpoints {
-		if r.URL.Path == ep.Path && r.Method == ep.Method {
-			fmt.Println("method:", r.Method)
-			fmt.Println("path:", r.URL.Path)
-			w.Header().Set(HeaderContentType, MIMETextPlainCharsetUTF8)
 		// check if method matches
 		methodMatches := false
 		for _, m := range ep.Methods {
@@ -163,13 +159,14 @@ func response(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if r.URL.Path == ep.Path && methodMatches {
+			w.Header().Set(HeaderContentType, MIMEApplicationJSON)
 			if conversation_header == "" {
 				w.Header().Set(HeaderConversationToken, CONV_TOKEN)
 			} else {
 				w.Header().Set(HeaderConversationToken, conversation_header)
 			}
 			w.WriteHeader(ep.Status)
-			s := path2Response(ep.JsonPath)
+			s := path2Response(ep.Path)
 			b := []byte(s)
 			w.Write(b)
 		}
