@@ -155,8 +155,7 @@ func response(w http.ResponseWriter, r *http.Request) {
 	conversation_header := w.Header().Get(HeaderConversationToken)
 	reqBody, err := getRequestBody(*r)
 	if err != nil {
-		log.Fatal(" ", err)
-		os.Exit(1)
+		log.Print("Request Body Not found!", err)
 	}
 
 	for _, ep := range api.Endpoints {
