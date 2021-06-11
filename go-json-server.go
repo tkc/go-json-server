@@ -194,7 +194,9 @@ func path2Response(path string, query string) string {
 	defer file.Close()
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(file)
-	fmt.Println("Recieved Query: ", query)
+	if query != "" {
+		fmt.Println("Recieved Query: ", query)
+	}
 	return buf.String()
 }
 
