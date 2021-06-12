@@ -14,6 +14,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/kyoh86/scopelint v0.2.0 h1:suOCh1T05nIY8srcI266aqwf3RLtO8kniZOTaAnzRyg=
 github.com/kyoh86/scopelint v0.2.0/go.mod h1:veFgnmDG8sPR5nFaXGX2mEIOXKHjWpGo79v/NaiTcRE=
+github.com/luisvinicius167/godux v0.0.0-20201004124859-70bcb3c51748 h1:zxEAPz/4rTq3JQ7ucEzyYlN8CUZnK4ZkpPVOSc3HjFo=
+github.com/luisvinicius167/godux v0.0.0-20201004124859-70bcb3c51748/go.mod h1:GKOUgS8DqzSU7SdV+hC3d4CjChNdgrjqtOMim+rAN74=
 github.com/mattn/go-isatty v0.0.6/go.mod h1:Iq45c/XA43vh69/j3iqttzPXn0bhXyGjM0Hdxcsrc5s=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
