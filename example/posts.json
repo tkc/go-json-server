@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "title": "Getting Started with Go",
+    "summary": "An introduction to the Go programming language",
+    "content": "Go is a statically typed, compiled programming language designed at Google...",
+    "published_at": "2025-02-10T14:30:00Z",
+    "tags": ["go", "programming", "tutorial"]
+  },
+  {
+    "id": 2,
+    "user_id": 1,
+    "title": "RESTful API Design",
+    "summary": "Best practices for designing RESTful APIs",
+    "content": "When designing a RESTful API, it's important to consider resource naming...",
+    "published_at": "2025-02-15T10:15:00Z",
+    "tags": ["api", "rest", "design"]
+  },
+  {
+    "id": 3,
+    "user_id": 2,
+    "title": "JSON Server for Mock APIs",
+    "summary": "How to use JSON Server for rapid API prototyping",
+    "content": "JSON Server is a great tool for quickly creating mock APIs without writing any backend code...",
+    "published_at": "2025-02-20T08:45:00Z",
+    "tags": ["json-server", "mock", "api", "prototyping"]
+  },
+  {
+    "id": 4,
+    "user_id": 4,
+    "title": "Testing Strategies for Frontend Applications",
+    "summary": "Comprehensive guide to testing frontend applications",
+    "content": "Testing is a crucial part of building reliable frontend applications...",
+    "published_at": "2025-03-01T16:20:00Z",
+    "tags": ["testing", "frontend", "javascript"]
+  },
+  {
+    "id": 5,
+    "user_id": 3,
+    "title": "Containerization with Docker",
+    "summary": "Learn how to containerize your applications",
+    "content": "Docker allows you to package your application with all of its dependencies into a standardized unit...",
+    "published_at": "2025-03-05T11:10:00Z",
+    "tags": ["docker", "containers", "devops"]
+  }
+]

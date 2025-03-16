@@ -1,27 +1,53 @@
 {
   "port": 3000,
+  "logLevel": "info",
+  "logFormat": "text",
   "endpoints": [
     {
       "method": "GET",
       "status": 200,
       "path": "/",
-      "jsonPath": "./health-check.json"
+      "jsonPath": "./example/health-check.json"
     },
     {
       "method": "GET",
       "status": 200,
       "path": "/users",
-      "jsonPath": "./users.json"
+      "jsonPath": "./example/users.json"
     },
     {
       "method": "GET",
       "status": 200,
-      "path": "/user/1",
-      "jsonPath": "./user.json"
+      "path": "/user/:id",
+      "jsonPath": "./example/user-detail.json"
     },
     {
-      "path": "/file",
-      "folder": "./static"
+      "method": "GET",
+      "status": 200,
+      "path": "/posts",
+      "jsonPath": "./example/posts.json"
+    },
+    {
+      "method": "GET",
+      "status": 200,
+      "path": "/posts/:id",
+      "jsonPath": "./example/post-detail.json"
+    },
+    {
+      "method": "GET",
+      "status": 200,
+      "path": "/users/:userId/posts/:postId",
+      "jsonPath": "./example/user-post.json"
+    },
+    {
+      "method": "POST",
+      "status": 201,
+      "path": "/users",
+      "jsonPath": "./example/user-created.json"
+    },
+    {
+      "path": "/static",
+      "folder": "./example/static"
     }
   ]
 }

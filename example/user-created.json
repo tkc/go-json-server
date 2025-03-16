@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "message": "User created successfully",
+  "user": {
+    "id": 5,
+    "name": "New User",
+    "email": "new.user@example.com",
+    "role": "user",
+    "active": true,
+    "created_at": "2025-03-16T12:30:00Z"
+  },
+  "links": {
+    "self": "/users/5",
+    "collection": "/users"
+  }
+}

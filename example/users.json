@@ -1,6 +1,34 @@
 [
   {
-    "id":1,
-    "name": "name"
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "role": "admin",
+    "active": true,
+    "created_at": "2025-01-15T08:30:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Jane Smith",
+    "email": "jane.smith@example.com",
+    "role": "user",
+    "active": true,
+    "created_at": "2025-01-18T14:45:00Z"
+  },
+  {
+    "id": 3,
+    "name": "Bob Johnson",
+    "email": "bob.johnson@example.com",
+    "role": "user",
+    "active": false,
+    "created_at": "2025-02-10T11:20:00Z"
+  },
+  {
+    "id": 4,
+    "name": "Alice Williams",
+    "email": "alice.williams@example.com",
+    "role": "manager",
+    "active": true,
+    "created_at": "2025-02-28T09:15:00Z"
   }
 ]

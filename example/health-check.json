@@ -1,4 +1,7 @@
 {
-    "status": "ok",
-    "message": "go-json-server started"
+  "status": "ok",
+  "message": "go-json-server is running",
+  "version": "1.0.0",
+  "timestamp": "2025-03-16T10:30:00Z",
+  "environment": "development"
 }

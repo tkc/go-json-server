@@ -1,164 +1,145 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
+	"context"
+	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"strconv"
+	"syscall"
+	"time"
 
+	"github.com/tkc/go-json-server/src/config"
+	"github.com/tkc/go-json-server/src/handler"
 	"github.com/tkc/go-json-server/src/logger"
+	"github.com/tkc/go-json-server/src/middleware"
 )
 
-const (
-	charsetUTF8 = "charset=UTF-8"
+var (
+	// Version of the application
+	Version = "1.0.0"
+
+	// Command line flags
+	configPath = flag.String("config", "./api.json", "Path to the configuration file")
+	port       = flag.Int("port", 0, "Server port (overrides config)")
+	logLevel   = flag.String("log-level", "", "Log level: debug, info, warn, error, fatal (overrides config)")
+	logFormat  = flag.String("log-format", "", "Log format: text, json (overrides config)")
+	logPath    = flag.String("log-path", "", "Path to log file (overrides config)")
+	cacheTTL   = flag.Int("cache-ttl", 300, "Cache TTL in seconds")
 )
-
-const (
-	MIMEApplicationJSON                  = "application/json"
-	MIMEApplicationJSONCharsetUTF8       = MIMEApplicationJSON + "; " + charsetUTF8
-	MIMEApplicationJavaScript            = "application/javascript"
-	MIMEApplicationJavaScriptCharsetUTF8 = MIMEApplicationJavaScript + "; " + charsetUTF8
-	MIMEApplicationXML                   = "application/xml"
-	MIMEApplicationXMLCharsetUTF8        = MIMEApplicationXML + "; " + charsetUTF8
-	MIMETextXML                          = "text/xml"
-	MIMETextXMLCharsetUTF8               = MIMETextXML + "; " + charsetUTF8
-	MIMEApplicationForm                  = "application/x-www-form-urlencoded"
-	MIMEApplicationProtobuf              = "application/protobuf"
-	MIMEApplicationMsgpack               = "application/msgpack"
-	MIMETextHTML                         = "text/html"
-	MIMETextHTMLCharsetUTF8              = MIMETextHTML + "; " + charsetUTF8
-	MIMETextPlain                        = "text/plain"
-	MIMETextPlainCharsetUTF8             = MIMETextPlain + "; " + charsetUTF8
-	MIMEMultipartForm                    = "multipart/form-data"
-	MIMEOctetStream                      = "application/octet-stream"
-)
-
-const (
-	HeaderAccept                        = "Accept"
-	HeaderAcceptEncoding                = "Accept-Encoding"
-	HeaderAllow                         = "Allow"
-	HeaderAuthorization                 = "Authorization"
-	HeaderContentDisposition            = "Content-Disposition"
-	HeaderContentEncoding               = "Content-Encoding"
-	HeaderContentLength                 = "Content-Length"
-	HeaderContentType                   = "Content-Type"
-	HeaderCookie                        = "Cookie"
-	HeaderSetCookie                     = "Set-Cookie"
-	HeaderIfModifiedSince               = "If-Modified-Since"
-	HeaderLastModified                  = "Last-Modified"
-	HeaderLocation                      = "Location"
-	HeaderUpgrade                       = "Upgrade"
-	HeaderVary                          = "Vary"
-	HeaderWWWAuthenticate               = "WWW-Authenticate"
-	HeaderXForwardedFor                 = "X-Forwarded-For"
-	HeaderXForwardedProto               = "X-Forwarded-Proto"
-	HeaderXForwardedProtocol            = "X-Forwarded-Protocol"
-	HeaderXForwardedSsl                 = "X-Forwarded-Ssl"
-	HeaderXUrlScheme                    = "X-Url-Scheme"
-	HeaderXHTTPMethodOverride           = "X-HTTP-Method-Override"
-	HeaderXRealIP                       = "X-Real-IP"
-	HeaderXRequestID                    = "X-Request-ID"
-	HeaderServer                        = "Server"
-	HeaderOrigin                        = "Origin"
-	HeaderAccessControlRequestMethod    = "Access-Control-Request-Method"
-	HeaderAccessControlRequestHeaders   = "Access-Control-Request-Headers"
-	HeaderAccessControlAllowOrigin      = "Access-Control-Allow-Origin"
-	HeaderAccessControlAllowMethods     = "Access-Control-Allow-Methods"
-	HeaderAccessControlAllowHeaders     = "Access-Control-Allow-Headers"
-	HeaderAccessControlAllowCredentials = "Access-Control-Allow-Credentials"
-	HeaderAccessControlExposeHeaders    = "Access-Control-Expose-Headers"
-	HeaderAccessControlMaxAge           = "Access-Control-Max-Age"
-	HeaderStrictTransportSecurity       = "Strict-Transport-Security"
-	HeaderXContentTypeOptions           = "X-Content-Type-Options"
-	HeaderXXSSProtection                = "X-XSS-Protection"
-	HeaderXFrameOptions                 = "X-Frame-Options"
-	HeaderContentSecurityPolicy         = "Content-Security-Policy"
-	HeaderXCSRFToken                    = "X-CSRF-Token"
-)
-
-type Endpoint struct {
-	Type     string `json:"type"`
-	Method   string `json:"method"`
-	Status   int    `json:"status"`
-	Path     string `json:"path"`
-	JsonPath string `json:"jsonPath"`
-	Folder   string `json:"folder"`
-}
-
-type API struct {
-	Host      string     `json:"host"`
-	Port      int        `json:"port"`
-	Endpoints []Endpoint `json:"endpoints"`
-}
-
-var api API
 
 func main() {
-	raw, err := ioutil.ReadFile("./api.json")
+	// Parse command line flags
+	flag.Parse()
+
+	// Load configuration
+	cfg, err := config.LoadConfig(*configPath)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Fatalf("Failed to load configuration: %v", err)
+	}
+
+	// Override configuration with command line flags
+	if *port > 0 {
+		cfg.Port = *port
+	}
+	if *logLevel != "" {
+		cfg.LogLevel = *logLevel
+	}
+	if *logFormat != "" {
+		cfg.LogFormat = *logFormat
+	}
+	if *logPath != "" {
+		cfg.LogPath = *logPath
+	}
+
+	// Initialize logger
+	logConfig := logger.LogConfig{
+		Level:      logger.ParseLogLevel(cfg.LogLevel),
+		Format:     logger.LogFormat(cfg.LogFormat),
+		OutputPath: cfg.LogPath,
+		TimeFormat: time.RFC3339,
+	}
+
+	log, err := logger.NewLogger(logConfig)
+	if err != nil {
+		fmt.Printf("Failed to initialize logger: %v\n", err)
 		os.Exit(1)
 	}
+	defer log.Close()
 
-	err = json.Unmarshal(raw, &api)
-	if err != nil {
-		log.Fatal(" ", err)
+	// Log startup information
+	log.Info("Starting go-json-server", map[string]any{
+		"version": Version,
+		"port":    cfg.Port,
+	})
+
+	// Create server with response cache
+	server := handler.NewServer(cfg, log, time.Duration(*cacheTTL)*time.Second)
+
+	// Setup configuration hot-reloading
+	reloadCh := make(chan bool)
+	if err := config.WatchConfig(*configPath, cfg, reloadCh); err != nil {
+		log.Error("Failed to watch config file", map[string]any{"error": err.Error()})
 	}
 
-	for _, ep := range api.Endpoints {
-		log.Print(ep)
-		if len(ep.Folder) > 0 {
-			http.Handle(ep.Path+"/", http.StripPrefix(ep.Path+"/", http.FileServer(http.Dir(ep.Folder))))
-		} else {
-			http.HandleFunc(ep.Path, response)
+	// Create HTTP server with middlewares
+	srv := &http.Server{
+		Addr: ":" + strconv.Itoa(cfg.Port),
+		Handler: middleware.Chain(
+			middleware.RequestID(),
+			middleware.Logger(log),
+			middleware.CORS(),
+			middleware.Timeout(30*time.Second),
+			middleware.Recovery(log),
+		)(http.HandlerFunc(server.HandleRequest)),
+	}
+
+	// Channel to listen for errors coming from the listener
+	serverErrors := make(chan error, 1)
+
+	// Start the server
+	go func() {
+		log.Info("Server listening", map[string]any{"address": srv.Addr})
+		serverErrors <- srv.ListenAndServe()
+	}()
+
+	// Channel to listen for config reload events
+	go func() {
+		for range reloadCh {
+			log.Info("Configuration reloaded")
+
+			// Clear the response cache when config changes
+			server.ClearCache()
+		}
+	}()
+
+	// Channel to listen for interrupt signals
+	shutdown := make(chan os.Signal, 1)
+	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
+
+	// Blocking main and waiting for shutdown or server error
+	select {
+	case err := <-serverErrors:
+		if err != nil && err != http.ErrServerClosed {
+			log.Error("Server error", map[string]any{"error": err.Error()})
+		}
+
+	case sig := <-shutdown:
+		log.Info("Shutdown signal received", map[string]any{
+			"signal": sig.String(),
+		})
+
+		// Give outstanding requests a deadline for completion
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		// Gracefully shutdown the server
+		if err := srv.Shutdown(ctx); err != nil {
+			log.Error("Graceful shutdown failed", map[string]any{"error": err.Error()})
+			srv.Close()
 		}
 	}
-
-	err = http.ListenAndServe(":"+strconv.Itoa(api.Port), nil)
-
-	if err != nil {
-		log.Fatal(" ", err)
-	}
-}
-
-func response(w http.ResponseWriter, r *http.Request) {
-
-	appLogger := logger.CreateLogger()
-
-	r.ParseForm()
-	appLogger.AccessLog(r)
-
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-
-	for _, ep := range api.Endpoints {
-		if r.URL.Path == ep.Path && r.Method == ep.Method {
-			fmt.Println("method:", r.Method)
-			fmt.Println("path:", r.URL.Path)
-			w.Header().Set(HeaderContentType, MIMETextPlainCharsetUTF8)
-			w.WriteHeader(ep.Status)
-			s := path2Response(ep.JsonPath)
-			b := []byte(s)
-			w.Write(b)
-		}
-		continue
-	}
-}
-
-func path2Response(path string) string {
-	file, err := os.Open(path)
-	if err != nil {
-		log.Print(err)
-		os.Exit(1)
-	}
-	defer file.Close()
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(file)
-	return buf.String()
 }

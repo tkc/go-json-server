@@ -1,30 +1,36 @@
 name: Go
 
-on: [push]
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
   build:
-    name: Build
+    name: Build and Test
     runs-on: ubuntu-latest
     steps:
-    - name: Set up Go 1.13
-      uses: actions/setup-go@v1
+    - name: Set up Go
+      uses: actions/setup-go@v4
       with:
-        go-version: 1.13
+        go-version: '1.22.3'
       id: go
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
+
+    - name: Check out code
+      uses: actions/checkout@v4
+
     - name: Get dependencies
-      run: |
-        export GO111MODULE=on
-        go mod download
-        go get -u github.com/kyoh86/scopelint
-    # - name: Lint
-      # run: |
-        # scopelint ./... 
-    - name: fmt
-      run: go fmt ./...      
-    - name: vet
+      run: go mod download
+
+    - name: Verify formatting
+      run: go fmt ./...
+      
+    - name: Vet
       run: go vet ./...
+      
+    - name: Test
+      run: go test -v ./...
+      
     - name: Build
-      run: go build -v .
+      run: go build -v ./...
