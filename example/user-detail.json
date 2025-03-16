@@ -1,0 +1,26 @@
+{
+  "id": ":id",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "role": "admin",
+  "active": true,
+  "created_at": "2025-01-15T08:30:00Z",
+  "profile": {
+    "avatar_url": "https://example.com/avatars/:id.jpg",
+    "bio": "Senior Developer with 10 years of experience",
+    "location": "San Francisco, CA",
+    "phone": "+1-555-123-4567"
+  },
+  "preferences": {
+    "theme": "dark",
+    "notifications": true,
+    "language": "en-US",
+    "timezone": "America/Los_Angeles"
+  },
+  "stats": {
+    "posts_count": 42,
+    "followers_count": 156,
+    "following_count": 89,
+    "last_active": "2025-03-15T18:30:00Z"
+  }
+}

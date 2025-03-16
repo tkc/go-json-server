@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Go JSON Server Example</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #0077cc;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    pre {
+      background-color: #f5f5f5;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    code {
+      font-family: 'Courier New', Courier, monospace;
+    }
+    .endpoint {
+      margin-bottom: 30px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+    }
+    .method {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    .get {
+      background-color: #61affe;
+      color: white;
+    }
+    .post {
+      background-color: #49cc90;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>Go JSON Server Example</h1>
+  
+  <p>This is a static page served by Go JSON Server. Below are the available API endpoints that you can test:</p>
+  
+  <div class="endpoint">
+    <h3><span class="method get">GET</span>/</h3>
+    <p>Health check endpoint</p>
+    <pre><code>// Response
+{
+  "status": "ok",
+  "message": "go-json-server is running",
+  "version": "1.0.0",
+  "timestamp": "2025-03-16T10:30:00Z",
+  "environment": "development"
+}</code></pre>
+  </div>
+  
+  <div class="endpoint">
+    <h3><span class="method get">GET</span>/users</h3>
+    <p>Get list of all users</p>
+    <pre><code>// Response
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "role": "admin",
+    ...
+  },
+  ...
+]</code></pre>
+  </div>
+  
+  <div class="endpoint">
+    <h3><span class="method get">GET</span>/user/:id</h3>
+    <p>Get a specific user by ID</p>
+    <pre><code>// Response
+{
+  "id": ":id",
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  ...
+}</code></pre>
+  </div>
+  
+  <div class="endpoint">
+    <h3><span class="method get">GET</span>/posts</h3>
+    <p>Get list of all posts</p>
+    <pre><code>// Response
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "title": "Getting Started with Go",
+    ...
+  },
+  ...
+]</code></pre>
+  </div>
+  
+  <div class="endpoint">
+    <h3><span class="method get">GET</span>/posts/:id</h3>
+    <p>Get a specific post by ID</p>
+    <pre><code>// Response
+{
+  "id": ":id",
+  "user_id": 1,
+  "title": "Getting Started with Go",
+  ...
+}</code></pre>
+  </div>
+  
+  <div class="endpoint">
+    <h3><span class="method get">GET</span>/users/:userId/posts/:postId</h3>
+    <p>Get a specific post by a specific user</p>
+    <pre><code>// Response
+{
+  "user_id": ":userId",
+  "post_id": ":postId",
+  "relationship": "User :userId wrote post :postId",
+  ...
+}</code></pre>
+  </div>
+  
+  <div class="endpoint">
+    <h3><span class="method post">POST</span>/users</h3>
+    <p>Create a new user</p>
+    <pre><code>// Response
+{
+  "success": true,
+  "message": "User created successfully",
+  "user": {
+    "id": 5,
+    "name": "New User",
+    ...
+  },
+  ...
+}</code></pre>
+  </div>
+
+  <hr>
+  <p><small>Powered by Go JSON Server. Static files are served from the /static directory.</small></p>
+</body>
+</html>

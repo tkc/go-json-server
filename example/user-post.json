@@ -1,0 +1,21 @@
+{
+  "user_id": ":userId",
+  "post_id": ":postId",
+  "relationship": "User :userId wrote post :postId",
+  "user": {
+    "id": ":userId",
+    "name": "Sample User :userId",
+    "profile_url": "/users/:userId"
+  },
+  "post": {
+    "id": ":postId",
+    "title": "Post :postId by User :userId",
+    "content": "This is content for post :postId written by user :userId",
+    "permalink": "/posts/:postId"
+  },
+  "metadata": {
+    "access_level": "public",
+    "created_at": "2025-03-16T12:00:00Z",
+    "last_modified": "2025-03-16T12:00:00Z"
+  }
+}

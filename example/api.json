@@ -1,5 +1,7 @@
 {
   "port": 3000,
+  "logLevel": "info",
+  "logFormat": "text",
   "endpoints": [
     {
       "method": "GET",
@@ -16,11 +18,35 @@
     {
       "method": "GET",
       "status": 200,
-      "path": "/user/1",
-      "jsonPath": "./user.json"
+      "path": "/user/:id",
+      "jsonPath": "./user-detail.json"
     },
     {
-      "path": "/file",
+      "method": "GET",
+      "status": 200,
+      "path": "/posts",
+      "jsonPath": "./posts.json"
+    },
+    {
+      "method": "GET",
+      "status": 200,
+      "path": "/posts/:id",
+      "jsonPath": "./post-detail.json"
+    },
+    {
+      "method": "GET",
+      "status": 200,
+      "path": "/users/:userId/posts/:postId",
+      "jsonPath": "./user-post.json"
+    },
+    {
+      "method": "POST",
+      "status": 201,
+      "path": "/users",
+      "jsonPath": "./user-created.json"
+    },
+    {
+      "path": "/static",
       "folder": "./static"
     }
   ]

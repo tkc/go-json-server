@@ -1,0 +1,40 @@
+{
+  "id": ":id",
+  "user_id": 1,
+  "title": "Getting Started with Go",
+  "summary": "An introduction to the Go programming language",
+  "content": "Go is a statically typed, compiled programming language designed at Google by Robert Griesemer, Rob Pike, and Ken Thompson. It is syntactically similar to C, but with memory safety, garbage collection, structural typing, and CSP-style concurrency. The language is often referred to as Golang because of its domain name, golang.org, but the proper name is Go.\n\nGo was designed at Google in 2007 to improve programming productivity in an era of multicore, networked machines and large codebases. The designers wanted to address criticism of other languages in use at Google, but keep their useful characteristics:\n\n- Static typing and run-time efficiency (like C++)\n- Readability and usability (like Python or JavaScript)\n- High-performance networking and multiprocessing\n\nThe language was announced in November 2009 and is used in many of Google's production systems, as well as by other firms.\n\n## Key Features\n\n### Simplicity\nGo was designed to be simple and easy to understand. It has a concise syntax and a small number of language constructs.\n\n### Concurrency\nGo has built-in concurrency features through goroutines and channels, making it easy to write programs that take advantage of multicore processors.\n\n### Fast Compilation\nGo compiles directly to machine code, making compilation extremely fast.\n\n### Garbage Collection\nGo includes automatic memory management, which helps prevent memory leaks and other related issues.\n\n## Getting Started\n\nHere's a simple \"Hello, World!\" program in Go:\n\n```go\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n    fmt.Println(\"Hello, World!\")\n}\n```\n\nTo run this program, save it as `hello.go` and execute:\n\n```bash\ngo run hello.go\n```\n\nOr build it into an executable:\n\n```bash\ngo build hello.go\n./hello\n```\n\nThis is just the beginning of your Go journey. Happy coding!",
+  "published_at": "2025-02-10T14:30:00Z",
+  "updated_at": "2025-02-12T09:15:00Z",
+  "tags": ["go", "programming", "tutorial"],
+  "comments": [
+    {
+      "id": 101,
+      "user_id": 2,
+      "content": "Great introduction! I've been meaning to learn Go.",
+      "created_at": "2025-02-10T16:45:00Z"
+    },
+    {
+      "id": 102,
+      "user_id": 3,
+      "content": "Could you add more examples about goroutines?",
+      "created_at": "2025-02-11T08:30:00Z"
+    },
+    {
+      "id": 103,
+      "user_id": 4,
+      "content": "Very helpful for beginners. Thanks!",
+      "created_at": "2025-02-12T14:20:00Z"
+    }
+  ],
+  "stats": {
+    "views": 1250,
+    "likes": 38,
+    "shares": 17
+  },
+  "author": {
+    "id": 1,
+    "name": "John Doe",
+    "avatar_url": "https://example.com/avatars/1.jpg"
+  }
+}
