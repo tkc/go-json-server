@@ -67,6 +67,18 @@ curl http://localhost:3000/static/index.html
 # Or open in browser: http://localhost:3000/static/index.html
 ```
 
+## Note on File Paths
+
+The paths in the `api.json` configuration file are relative to the directory from which you run the server, not the location of the configuration file itself. This means that when running from the project root, all paths include the `example/` prefix, like:
+
+```json
+{
+  "jsonPath": "./example/health-check.json"
+}
+```
+
+If you want to run the server while in the example directory, you would need to modify the paths in `api.json` to remove the `example/` prefix.
+
 ## Customizing
 
 Feel free to modify these example files or create your own to experiment with the Go JSON Server's capabilities.

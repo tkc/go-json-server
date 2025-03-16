@@ -7,47 +7,47 @@
       "method": "GET",
       "status": 200,
       "path": "/",
-      "jsonPath": "./health-check.json"
+      "jsonPath": "./example/health-check.json"
     },
     {
       "method": "GET",
       "status": 200,
       "path": "/users",
-      "jsonPath": "./users.json"
+      "jsonPath": "./example/users.json"
     },
     {
       "method": "GET",
       "status": 200,
       "path": "/user/:id",
-      "jsonPath": "./user-detail.json"
+      "jsonPath": "./example/user-detail.json"
     },
     {
       "method": "GET",
       "status": 200,
       "path": "/posts",
-      "jsonPath": "./posts.json"
+      "jsonPath": "./example/posts.json"
     },
     {
       "method": "GET",
       "status": 200,
       "path": "/posts/:id",
-      "jsonPath": "./post-detail.json"
+      "jsonPath": "./example/post-detail.json"
     },
     {
       "method": "GET",
       "status": 200,
       "path": "/users/:userId/posts/:postId",
-      "jsonPath": "./user-post.json"
+      "jsonPath": "./example/user-post.json"
     },
     {
       "method": "POST",
       "status": 201,
       "path": "/users",
-      "jsonPath": "./user-created.json"
+      "jsonPath": "./example/user-created.json"
     },
     {
       "path": "/static",
-      "folder": "./static"
+      "folder": "./example/static"
     }
   ]
 }
