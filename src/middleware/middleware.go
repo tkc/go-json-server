@@ -18,13 +18,13 @@ func Logger(log *logger.Logger) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			start := time.Now()
-			
+
 			// Wrap response writer to capture status code
 			rw := &responseWriter{ResponseWriter: w, statusCode: http.StatusOK}
-			
+
 			// Call the next handler
 			next.ServeHTTP(rw, r)
-			
+
 			// Calculate request duration and log the request
 			duration := time.Since(start)
 			log.AccessLog(r, rw.statusCode, duration)
@@ -63,10 +63,10 @@ func Timeout(timeout time.Duration) Middleware {
 
 			// Update request with new context
 			r = r.WithContext(ctx)
-			
+
 			// Create done channel
 			done := make(chan struct{})
-			
+
 			// Execute handler in goroutine
 			go func() {
 				next.ServeHTTP(w, r)
@@ -105,7 +105,7 @@ func Recovery(log *logger.Logger) Middleware {
 						"method":     r.Method,
 						"remoteAddr": r.RemoteAddr,
 					})
-					
+
 					// Return error response to client
 					w.Header().Set("Content-Type", "application/json")
 					w.WriteHeader(http.StatusInternalServerError)
@@ -114,7 +114,7 @@ func Recovery(log *logger.Logger) Middleware {
 					})
 				}
 			}()
-			
+
 			next.ServeHTTP(w, r)
 		})
 	}
@@ -130,10 +130,10 @@ func RequestID() Middleware {
 				// Generate UUID (in practice, use a UUID library)
 				requestID = time.Now().Format("20060102150405") + "-" + randomString(8)
 			}
-			
+
 			// Set request ID in response header
 			w.Header().Set("X-Request-ID", requestID)
-			
+
 			// Add request ID to context
 			ctx := context.WithValue(r.Context(), "requestID", requestID)
 			next.ServeHTTP(w, r.WithContext(ctx))

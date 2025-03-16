@@ -121,7 +121,7 @@ func (c *Config) Reload(path string) error {
 
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	
+
 	c.Host = newConfig.Host
 	c.Port = newConfig.Port
 	c.LogLevel = newConfig.LogLevel
@@ -136,11 +136,11 @@ func (c *Config) Reload(path string) error {
 func (c *Config) GetEndpoints() []Endpoint {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	
+
 	// Create a copy to avoid race conditions
 	endpoints := make([]Endpoint, len(c.Endpoints))
 	copy(endpoints, c.Endpoints)
-	
+
 	return endpoints
 }
 
@@ -171,27 +171,27 @@ func WatchConfig(configPath string, config *Config, reloadCh chan<- bool) error 
 	if err != nil {
 		return fmt.Errorf("failed to create file watcher: %w", err)
 	}
-	
+
 	go func() {
 		defer watcher.Close()
-		
+
 		dir := filepath.Dir(configPath)
 		if err := watcher.Add(dir); err != nil {
 			fmt.Printf("Error watching directory %s: %v\n", dir, err)
 			return
 		}
-		
+
 		for {
 			select {
 			case event, ok := <-watcher.Events:
 				if !ok {
 					return
 				}
-				
+
 				if event.Name == configPath && (event.Op&fsnotify.Write == fsnotify.Write) {
 					// Add a small delay to wait for write completion
 					time.Sleep(100 * time.Millisecond)
-					
+
 					fmt.Println("Config file changed, reloading...")
 					if err := config.Reload(configPath); err != nil {
 						fmt.Printf("Error reloading config: %v\n", err)
@@ -199,7 +199,7 @@ func WatchConfig(configPath string, config *Config, reloadCh chan<- bool) error 
 						reloadCh <- true
 					}
 				}
-				
+
 			case err, ok := <-watcher.Errors:
 				if !ok {
 					return
@@ -208,6 +208,6 @@ func WatchConfig(configPath string, config *Config, reloadCh chan<- bool) error 
 			}
 		}
 	}()
-	
+
 	return nil
 }

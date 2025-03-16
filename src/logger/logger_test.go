@@ -3,7 +3,6 @@ package logger
 import (
 	"bytes"
 	"encoding/json"
-	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -99,7 +98,7 @@ func TestLogger_log(t *testing.T) {
 	assert.Contains(t, output, "DEBUG")
 	assert.Contains(t, output, "Debug message")
 	assert.Contains(t, output, `"key":"value"`)
-	
+
 	// Reset buffer
 	buf.Reset()
 
@@ -107,7 +106,7 @@ func TestLogger_log(t *testing.T) {
 	log.format = FormatJSON
 	log.Info("Info message", map[string]any{"number": 42})
 	output = buf.String()
-	
+
 	var logEntry LogEntry
 	err := json.Unmarshal([]byte(strings.TrimSpace(output)), &logEntry)
 	assert.NoError(t, err)
@@ -147,7 +146,7 @@ func TestLogger_LogMethods(t *testing.T) {
 			buf.Reset()
 			tt.method(tt.message, tt.data)
 			output := buf.String()
-			
+
 			if tt.shouldExist {
 				assert.Contains(t, output, tt.level)
 				assert.Contains(t, output, tt.message)
@@ -179,32 +178,32 @@ func TestLogger_AccessLog(t *testing.T) {
 	// Create a test request
 	req := httptest.NewRequest("GET", "/test", nil)
 	req.Header.Set("User-Agent", "test-agent")
-	
+
 	// Log an access entry
 	log.AccessLog(req, 200, 100*time.Millisecond)
 	output := buf.String()
-	
+
 	// Check text format
 	assert.Contains(t, output, "GET")
 	assert.Contains(t, output, "/test")
 	assert.Contains(t, output, "200")
 	assert.Contains(t, output, "100.00ms")
 	assert.Contains(t, output, "test-agent")
-	
+
 	// Reset buffer and test JSON format
 	buf.Reset()
 	log.format = FormatJSON
-	
+
 	// Create a request with JSON body
 	jsonBody := `{"test":"value"}`
 	req = httptest.NewRequest("POST", "/api", strings.NewReader(jsonBody))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", "test-agent")
-	
+
 	// Log an access entry
 	log.AccessLog(req, 201, 150*time.Millisecond)
 	output = buf.String()
-	
+
 	var accessEntry AccessLogEntry
 	err := json.Unmarshal([]byte(strings.TrimSpace(output)), &accessEntry)
 	assert.NoError(t, err)

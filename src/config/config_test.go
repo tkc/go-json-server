@@ -1,11 +1,9 @@
 package config
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -67,70 +65,86 @@ func TestConfig_Validate(t *testing.T) {
 	err = os.Mkdir(testFolder, 0755)
 	assert.NoError(t, err)
 
-	tests := []struct {
+	type testCase struct {
 		name      string
-		config    Config
+		setupFn   func() Config
 		wantError bool
-	}{
+	}
+
+	tests := []testCase{
 		{
 			name: "Valid config",
-			config: Config{
-				Endpoints: []Endpoint{
-					{Method: "GET", Path: "/test", JsonPath: jsonFile, Status: 200},
-				},
+			setupFn: func() Config {
+				return Config{
+					Endpoints: []Endpoint{
+						{Method: "GET", Path: "/test", JsonPath: jsonFile, Status: 200},
+					},
+				}
 			},
 			wantError: false,
 		},
 		{
 			name: "Valid config with file server",
-			config: Config{
-				Endpoints: []Endpoint{
-					{Path: "/static", Folder: testFolder},
-				},
+			setupFn: func() Config {
+				return Config{
+					Endpoints: []Endpoint{
+						{Path: "/static", Folder: testFolder},
+					},
+				}
 			},
 			wantError: false,
 		},
 		{
 			name: "No endpoints",
-			config: Config{
-				Endpoints: []Endpoint{},
+			setupFn: func() Config {
+				return Config{
+					Endpoints: []Endpoint{},
+				}
 			},
 			wantError: true,
 		},
 		{
 			name: "Empty path",
-			config: Config{
-				Endpoints: []Endpoint{
-					{Method: "GET", Path: "", JsonPath: jsonFile, Status: 200},
-				},
+			setupFn: func() Config {
+				return Config{
+					Endpoints: []Endpoint{
+						{Method: "GET", Path: "", JsonPath: jsonFile, Status: 200},
+					},
+				}
 			},
 			wantError: true,
 		},
 		{
 			name: "Duplicate endpoint",
-			config: Config{
-				Endpoints: []Endpoint{
-					{Method: "GET", Path: "/test", JsonPath: jsonFile, Status: 200},
-					{Method: "GET", Path: "/test", JsonPath: jsonFile, Status: 200},
-				},
+			setupFn: func() Config {
+				return Config{
+					Endpoints: []Endpoint{
+						{Method: "GET", Path: "/test", JsonPath: jsonFile, Status: 200},
+						{Method: "GET", Path: "/test", JsonPath: jsonFile, Status: 200},
+					},
+				}
 			},
 			wantError: true,
 		},
 		{
 			name: "JSON file not found",
-			config: Config{
-				Endpoints: []Endpoint{
-					{Method: "GET", Path: "/test", JsonPath: filepath.Join(tempDir, "notfound.json"), Status: 200},
-				},
+			setupFn: func() Config {
+				return Config{
+					Endpoints: []Endpoint{
+						{Method: "GET", Path: "/test", JsonPath: filepath.Join(tempDir, "notfound.json"), Status: 200},
+					},
+				}
 			},
 			wantError: true,
 		},
 		{
 			name: "Folder not found",
-			config: Config{
-				Endpoints: []Endpoint{
-					{Path: "/static", Folder: filepath.Join(tempDir, "notfound")},
-				},
+			setupFn: func() Config {
+				return Config{
+					Endpoints: []Endpoint{
+						{Path: "/static", Folder: filepath.Join(tempDir, "notfound")},
+					},
+				}
 			},
 			wantError: true,
 		},
@@ -138,7 +152,8 @@ func TestConfig_Validate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := tt.config.Validate()
+			config := tt.setupFn()
+			err := config.Validate()
 			if tt.wantError {
 				assert.Error(t, err)
 			} else {

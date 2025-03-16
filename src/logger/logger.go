@@ -150,6 +150,11 @@ func NewLogger(config LogConfig) (*Logger, error) {
 	}, nil
 }
 
+// SetWriter sets a new writer for the logger (useful for testing)
+func (l *Logger) SetWriter(writer io.Writer) {
+	l.writer = writer
+}
+
 // log records a message at the specified level
 func (l *Logger) log(level LogLevel, message string, data map[string]any) {
 	if level < l.level {

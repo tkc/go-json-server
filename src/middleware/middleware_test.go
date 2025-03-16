@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -18,12 +17,15 @@ func TestLogger_Middleware(t *testing.T) {
 	var buf bytes.Buffer
 
 	// Create a test logger
-	log := &logger.Logger{
-		Writer:     &buf,
+	log, err := logger.NewLogger(logger.LogConfig{
 		Level:      logger.LevelDebug,
 		Format:     logger.FormatText,
 		TimeFormat: time.RFC3339,
-	}
+	})
+	assert.NoError(t, err)
+
+	// Replace the writer with our buffer
+	log.SetWriter(&buf)
 
 	// Create a test handler
 	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -127,12 +129,15 @@ func TestRecovery_Middleware(t *testing.T) {
 	var buf bytes.Buffer
 
 	// Create a test logger
-	log := &logger.Logger{
-		Writer:     &buf,
+	log, err := logger.NewLogger(logger.LogConfig{
 		Level:      logger.LevelDebug,
 		Format:     logger.FormatText,
 		TimeFormat: time.RFC3339,
-	}
+	})
+	assert.NoError(t, err)
+
+	// Replace the writer with our buffer
+	log.SetWriter(&buf)
 
 	// Create a handler that panics
 	panicHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -152,7 +157,7 @@ func TestRecovery_Middleware(t *testing.T) {
 	// Check response
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	var response map[string]string
-	err := json.Unmarshal(w.Body.Bytes(), &response)
+	err = json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
 	assert.Equal(t, "internal server error", response["error"])
 
