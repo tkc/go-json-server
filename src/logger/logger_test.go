@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -212,4 +213,219 @@ func TestLogger_AccessLog(t *testing.T) {
 	assert.Equal(t, 201, accessEntry.Status)
 	assert.Equal(t, 150.0, accessEntry.Latency)
 	assert.Equal(t, "test-agent", accessEntry.UserAgent)
+}
+
+func TestLogger_LevelFiltering(t *testing.T) {
+	var buf bytes.Buffer
+
+	log := &Logger{
+		level:      LevelWarn,
+		format:     FormatText,
+		writer:     &buf,
+		timeFormat: time.RFC3339,
+	}
+
+	// Debug and Info should be filtered out
+	log.Debug("debug msg")
+	assert.Empty(t, buf.String(), "Debug should be filtered when level is Warn")
+
+	log.Info("info msg")
+	assert.Empty(t, buf.String(), "Info should be filtered when level is Warn")
+
+	// Warn and Error should pass through
+	log.Warn("warn msg")
+	assert.Contains(t, buf.String(), "WARN")
+	assert.Contains(t, buf.String(), "warn msg")
+
+	buf.Reset()
+	log.Error("error msg")
+	assert.Contains(t, buf.String(), "ERROR")
+	assert.Contains(t, buf.String(), "error msg")
+}
+
+func TestLogger_LogMethodsWithoutData(t *testing.T) {
+	var buf bytes.Buffer
+
+	log := &Logger{
+		level:      LevelDebug,
+		format:     FormatText,
+		writer:     &buf,
+		timeFormat: time.RFC3339,
+	}
+
+	// Call log methods without data (variadic args empty)
+	log.Debug("debug no data")
+	assert.Contains(t, buf.String(), "debug no data")
+	assert.NotContains(t, buf.String(), "{") // No data JSON
+
+	buf.Reset()
+	log.Info("info no data")
+	assert.Contains(t, buf.String(), "info no data")
+
+	buf.Reset()
+	log.Warn("warn no data")
+	assert.Contains(t, buf.String(), "warn no data")
+
+	buf.Reset()
+	log.Error("error no data")
+	assert.Contains(t, buf.String(), "error no data")
+}
+
+func TestLogger_JSONFormatWithData(t *testing.T) {
+	var buf bytes.Buffer
+
+	log := &Logger{
+		level:      LevelDebug,
+		format:     FormatJSON,
+		writer:     &buf,
+		timeFormat: time.RFC3339,
+	}
+
+	log.Info("test", map[string]any{"key": "value", "count": 10})
+
+	var entry LogEntry
+	err := json.Unmarshal([]byte(strings.TrimSpace(buf.String())), &entry)
+	assert.NoError(t, err)
+	assert.Equal(t, "INFO", entry.Level)
+	assert.Equal(t, "test", entry.Message)
+	assert.Equal(t, "value", entry.Data["key"])
+	assert.Equal(t, float64(10), entry.Data["count"])
+}
+
+func TestLogger_JSONFormatWithoutData(t *testing.T) {
+	var buf bytes.Buffer
+
+	log := &Logger{
+		level:      LevelDebug,
+		format:     FormatJSON,
+		writer:     &buf,
+		timeFormat: time.RFC3339,
+	}
+
+	log.Info("no data message")
+
+	var entry LogEntry
+	err := json.Unmarshal([]byte(strings.TrimSpace(buf.String())), &entry)
+	assert.NoError(t, err)
+	assert.Equal(t, "INFO", entry.Level)
+	assert.Equal(t, "no data message", entry.Message)
+	assert.Nil(t, entry.Data)
+}
+
+func TestNewLogger_FileOutput(t *testing.T) {
+	tempDir := t.TempDir()
+	logFile := tempDir + "/test.log"
+
+	log, err := NewLogger(LogConfig{
+		Level:      LevelInfo,
+		Format:     FormatText,
+		OutputPath: logFile,
+	})
+	assert.NoError(t, err)
+	assert.NotNil(t, log)
+
+	log.Info("file output test")
+	log.Close()
+
+	// Verify the file was written
+	content, err := os.ReadFile(logFile)
+	assert.NoError(t, err)
+	assert.Contains(t, string(content), "file output test")
+}
+
+func TestNewLogger_FileOutputCreatesDirectory(t *testing.T) {
+	tempDir := t.TempDir()
+	logFile := tempDir + "/subdir/nested/test.log"
+
+	log, err := NewLogger(LogConfig{
+		Level:      LevelInfo,
+		Format:     FormatText,
+		OutputPath: logFile,
+	})
+	assert.NoError(t, err)
+	assert.NotNil(t, log)
+
+	log.Info("nested dir test")
+	log.Close()
+
+	content, err := os.ReadFile(logFile)
+	assert.NoError(t, err)
+	assert.Contains(t, string(content), "nested dir test")
+}
+
+func TestLogger_Close_Stdout(t *testing.T) {
+	log, err := NewLogger(LogConfig{
+		Level:  LevelInfo,
+		Format: FormatText,
+	})
+	assert.NoError(t, err)
+
+	// Close on stdout writer should not fail
+	err = log.Close()
+	assert.NoError(t, err)
+}
+
+func TestLogger_AccessLog_NonJSONContentType(t *testing.T) {
+	var buf bytes.Buffer
+
+	log := &Logger{
+		level:      LevelDebug,
+		format:     FormatText,
+		writer:     &buf,
+		timeFormat: time.RFC3339,
+	}
+
+	// POST with non-JSON content type
+	req := httptest.NewRequest("POST", "/submit", strings.NewReader("plain text body"))
+	req.Header.Set("Content-Type", "text/plain")
+	req.Header.Set("User-Agent", "test-agent")
+
+	log.AccessLog(req, 200, 50*time.Millisecond)
+	output := buf.String()
+
+	assert.Contains(t, output, "POST")
+	assert.Contains(t, output, "/submit")
+	assert.Contains(t, output, "200")
+}
+
+func TestLogger_AccessLog_GETRequest(t *testing.T) {
+	var buf bytes.Buffer
+
+	log := &Logger{
+		level:      LevelDebug,
+		format:     FormatJSON,
+		writer:     &buf,
+		timeFormat: time.RFC3339,
+	}
+
+	req := httptest.NewRequest("GET", "/api/data?q=test", nil)
+	req.Header.Set("User-Agent", "curl/7.0")
+
+	log.AccessLog(req, 200, 5*time.Millisecond)
+
+	var entry AccessLogEntry
+	err := json.Unmarshal([]byte(strings.TrimSpace(buf.String())), &entry)
+	assert.NoError(t, err)
+	assert.Equal(t, "GET", entry.Method)
+	assert.Equal(t, "/api/data", entry.Path)
+	assert.Equal(t, "curl/7.0", entry.UserAgent)
+	assert.Nil(t, entry.Body, "GET request should not include body")
+}
+
+func TestNewLogger_DefaultTimeFormat(t *testing.T) {
+	log, err := NewLogger(LogConfig{
+		Level: LevelInfo,
+	})
+	assert.NoError(t, err)
+	assert.NotNil(t, log)
+	assert.Equal(t, time.RFC3339, log.timeFormat)
+}
+
+func TestNewLogger_DefaultFormat(t *testing.T) {
+	log, err := NewLogger(LogConfig{
+		Level: LevelInfo,
+	})
+	assert.NoError(t, err)
+	assert.NotNil(t, log)
+	assert.Equal(t, FormatText, log.format)
 }

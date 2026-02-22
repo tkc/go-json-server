@@ -277,3 +277,150 @@ func TestRandomString(t *testing.T) {
 	s2 := randomString(16)
 	assert.NotEqual(t, s1, s2)
 }
+
+func TestCORS_AllMethods(t *testing.T) {
+	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+	handler := CORS()(testHandler)
+
+	methods := []string{"GET", "POST", "PUT", "DELETE", "PATCH"}
+	for _, method := range methods {
+		t.Run(method, func(t *testing.T) {
+			req := httptest.NewRequest(method, "/test", nil)
+			w := httptest.NewRecorder()
+			handler.ServeHTTP(w, req)
+
+			assert.Equal(t, http.StatusOK, w.Code)
+			assert.Equal(t, "*", w.Header().Get("Access-Control-Allow-Origin"))
+			assert.Contains(t, w.Header().Get("Access-Control-Allow-Methods"), method)
+		})
+	}
+}
+
+func TestRecovery_NoPanic(t *testing.T) {
+	var buf bytes.Buffer
+	log, err := logger.NewLogger(logger.LogConfig{
+		Level:      logger.LevelDebug,
+		Format:     logger.FormatText,
+		TimeFormat: time.RFC3339,
+	})
+	assert.NoError(t, err)
+	log.SetWriter(&buf)
+
+	normalHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
+
+	handler := Recovery(log)(normalHandler)
+	req := httptest.NewRequest("GET", "/test", nil)
+	w := httptest.NewRecorder()
+	handler.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, "OK", w.Body.String())
+	assert.NotContains(t, buf.String(), "Panic recovered")
+}
+
+func TestChain_EmptyMiddleware(t *testing.T) {
+	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("direct"))
+	})
+
+	// Chain with no middlewares should just call the handler directly
+	handler := Chain()(testHandler)
+	req := httptest.NewRequest("GET", "/test", nil)
+	w := httptest.NewRecorder()
+	handler.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, "direct", w.Body.String())
+}
+
+func TestChain_Order(t *testing.T) {
+	var order []string
+
+	m1 := func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			order = append(order, "m1-before")
+			next.ServeHTTP(w, r)
+			order = append(order, "m1-after")
+		})
+	}
+	m2 := func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			order = append(order, "m2-before")
+			next.ServeHTTP(w, r)
+			order = append(order, "m2-after")
+		})
+	}
+
+	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		order = append(order, "handler")
+		w.WriteHeader(http.StatusOK)
+	})
+
+	handler := Chain(m1, m2)(testHandler)
+	req := httptest.NewRequest("GET", "/test", nil)
+	w := httptest.NewRecorder()
+	handler.ServeHTTP(w, req)
+
+	// m1 should execute first (outermost), then m2, then handler
+	assert.Equal(t, []string{"m1-before", "m2-before", "handler", "m2-after", "m1-after"}, order)
+}
+
+func TestLogger_Middleware_WithDifferentStatus(t *testing.T) {
+	var buf bytes.Buffer
+	log, err := logger.NewLogger(logger.LogConfig{
+		Level:      logger.LevelDebug,
+		Format:     logger.FormatText,
+		TimeFormat: time.RFC3339,
+	})
+	assert.NoError(t, err)
+	log.SetWriter(&buf)
+
+	tests := []struct {
+		name   string
+		status int
+	}{
+		{"200 OK", http.StatusOK},
+		{"201 Created", http.StatusCreated},
+		{"400 Bad Request", http.StatusBadRequest},
+		{"404 Not Found", http.StatusNotFound},
+		{"500 Internal Server Error", http.StatusInternalServerError},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			buf.Reset()
+
+			testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(tt.status)
+			})
+
+			handler := Logger(log)(testHandler)
+			req := httptest.NewRequest("GET", "/test", nil)
+			w := httptest.NewRecorder()
+			handler.ServeHTTP(w, req)
+
+			assert.Equal(t, tt.status, w.Code)
+		})
+	}
+}
+
+func TestResponseWriter_WriteBeforeWriteHeader(t *testing.T) {
+	origWriter := httptest.NewRecorder()
+	rw := &responseWriter{
+		ResponseWriter: origWriter,
+	}
+
+	// Write without calling WriteHeader first
+	n, err := rw.Write([]byte("hello"))
+	assert.NoError(t, err)
+	assert.Equal(t, 5, n)
+	assert.Equal(t, http.StatusOK, rw.statusCode) // Default 200
+	assert.True(t, rw.written)
+	assert.Equal(t, "hello", origWriter.Body.String())
+}
