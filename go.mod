@@ -4,7 +4,6 @@ go 1.22
 
 require (
 	github.com/fsnotify/fsnotify v1.7.0
-	github.com/spf13/cast v1.6.0
 	github.com/stretchr/testify v1.8.4
 )
 

@@ -328,7 +328,7 @@ func TestHandleRequest_DELETE(t *testing.T) {
 	w := httptest.NewRecorder()
 	server.HandleRequest(w, req)
 
-	assert.Equal(t, 204, w.Code)
+	assert.Equal(t, http.StatusNoContent, w.Code)
 }
 
 func TestHandleRequest_OPTIONS(t *testing.T) {
